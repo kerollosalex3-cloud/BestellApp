@@ -3,18 +3,39 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>BestellApp</title>
+    <meta name="description" content="Burgers, pizza and fresh salads from BurgerHouse. Choose your favourites and build your order.">
+    <title>BurgerHouse | BestellApp</title>
     <link rel="stylesheet" href="style.css">
     <script src="script.js" defer></script>
 </head>
 <body>
     <!-- start header -->
-    <header></header>
+    <header class="site-header" id="top">
+        <div class="header-content">
+            <a href="#top" aria-label="BestellApp home"><img src="assets/images/brand.png" alt="BestellApp" class="brand"></a>
+            <button class="menu-toggle" aria-label="Open menu" aria-expanded="false" aria-controls="header-menu"><span></span><span></span><span></span></button>
+            <nav id="header-menu" hidden>
+                <a href="#burger">Burger &amp; Sandwiches</a>
+                <a href="#pizza">Pizza</a>
+                <a href="#salad">Salad</a>
+            </nav>
+        </div>
+    </header>
     <!-- end header -->
 
     <!-- start main -->
-    <main>
-        <h1>BestellApp</h1>
+    <main class="page-content">
+        <!-- start restaurant -->
+        <div class="hero"><img src="assets/images/hero.png" alt="Fresh burgers, pizza and fries on a wooden table"></div>
+        <section class="restaurant" aria-labelledby="restaurant-name">
+            <img class="restaurant-logo" src="assets/images/restaurant-logo.png" alt="BurgerHouse burger logo">
+            <div class="restaurant-heading">
+                <h1 id="restaurant-name"><span>Burger</span>House</h1>
+                <span class="rating" aria-label="Rated 4.1 out of 5 from 317 reviews"><b aria-hidden="true">★</b> 4,1 <span>(317)</span></span>
+            </div>
+            <p>The best of Burgers, Pizza, and Greens, all in one great place.</p>
+        </section>
+        <!-- end restaurant -->
     </main>
     <!-- end main -->
 
