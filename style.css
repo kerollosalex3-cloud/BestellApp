@@ -42,3 +42,24 @@ h1 > span { color: #e76c1f; }
 .rating > span { color: #726d6d; margin-left: 4px; }
 .restaurant p { margin-top: 17px; font-size: 24px; font-weight: 700; line-height: 1.2; }
 /* end restaurant */
+
+/* start food menu */
+.menu-area { position: relative; }
+.food-section { scroll-margin-top: 32px; }
+.section-heading { height: 60px; background: #e76c1f; color: white; display: flex; align-items: center; padding-left: 284px; position: relative; }
+.section-heading > img { width: 87px; height: 91px; object-fit: contain; position: absolute; left: 168px; bottom: 0; }
+.section-heading h2 { font-size: 40px; line-height: 1.2; font-weight: 700; }
+.section-heading h2 span { font-weight: 400; margin-left: 8px; }
+.meal-list { width: 713px; margin-left: 119px; display: flex; flex-direction: column; gap: 16px; padding-top: 26px; padding-bottom: 61px; }
+.meal { min-height: 141px; padding: 10px; border-radius: 12px; background: #fdeadc; display: flex; gap: 15px; }
+.meal-image { width: 207px; height: 120px; object-fit: cover; border-radius: 8px; flex-shrink: 0; }
+.meal-details { position: relative; flex: 1; min-width: 0; padding-right: 80px; }
+.meal h3 { font-size: 24px; font-weight: 600; line-height: 1.1; margin-bottom: 6px; }
+.meal p { font-size: 16px; font-weight: 500; line-height: 1.2; }
+.meal-price { position: absolute; right: 5px; top: 0; font-size: 24px; font-weight: 600; line-height: 1.2; }
+.add-button { position: absolute; right: 0; bottom: 14px; padding: 3px 9px; border: 0; border-radius: 20px; background: white; color: #363534; font-size: 16px; font-weight: 600; line-height: 1.4; }
+.add-button:hover { background: #facaac; }
+.add-button.added { color: #e76c1f; }
+#pizza .meal-list { padding-top: 32px; padding-bottom: 116px; }
+#salad .meal-list { padding-top: 37px; padding-bottom: 123px; }
+/* end food menu */
