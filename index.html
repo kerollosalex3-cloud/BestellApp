@@ -45,17 +45,19 @@
         <div class="menu-area">
             <!-- start basket -->
             <div class="basket-backdrop" hidden></div>
-            <aside class="basket" aria-labelledby="basket-title">
-                <button class="basket-close" aria-label="Close basket" hidden>×</button>
-                <h2 id="basket-title">Your Basket</h2>
-                <div class="basket-items"><p class="empty-basket">Your basket is empty.<br>Add something delicious!</p></div>
-                <div class="basket-summary">
-                    <p><span>Subtotal</span><span id="subtotal">0,00€</span></p>
-                    <p><span>Delivery fee</span><span id="delivery-fee">0,00€</span></p>
-                    <p class="total"><strong>Total</strong><strong id="total">0,00€</strong></p>
-                    <button class="checkout-button" disabled>Buy now (0,00€)</button>
-                </div>
-            </aside>
+            <div class="basket-column">
+                <aside class="basket" aria-labelledby="basket-title">
+                    <button class="basket-close" aria-label="Close basket" hidden>×</button>
+                    <h2 id="basket-title">Your Basket</h2>
+                    <div class="basket-items"><p class="empty-basket">Your basket is empty.<br>Add something delicious!</p></div>
+                    <div class="basket-summary">
+                        <p><span>Subtotal</span><span id="subtotal">0,00€</span></p>
+                        <p><span>Delivery fee</span><span id="delivery-fee">0,00€</span></p>
+                        <p class="total"><strong>Total</strong><strong id="total">0,00€</strong></p>
+                        <button class="checkout-button" disabled>Buy now (0,00€)</button>
+                    </div>
+                </aside>
+            </div>
             <!-- end basket -->
             <section class="food-section" id="burger" aria-labelledby="burger-title">
                 <div class="section-heading"><img src="assets/images/burger-icon.png" alt=""><h2 id="burger-title">Burger<span class="desktop-label"> &amp; Sandwiches</span></h2></div>
