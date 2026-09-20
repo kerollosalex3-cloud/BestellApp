@@ -1,80 +1,52 @@
 "use strict";
 
-/* start basket */
-const meals = Array.from(document.querySelectorAll(".meal"));
-const basket = document.querySelector(".basket");
-const basketItems = document.querySelector(".basket-items");
-const checkoutButton = document.querySelector(".checkout-button");
-const mobileCart = document.querySelector(".mobile-cart");
-const basketClose = document.querySelector(".basket-close");
-const backdrop = document.querySelector(".basket-backdrop");
 let cart = {};
+let meals = [];
+let mobileLayout;
 
-try {
-    const savedCart = JSON.parse(localStorage.getItem("burgerhouse-cart")) || {};
+/* start initialization */
+function init() {
+    meals = Array.from(document.querySelectorAll(".meal"));
+    mobileLayout = window.matchMedia("(max-width: 1320px)");
+    loadCart();
+    renderBasket();
+    initMealEvents();
+    initBasketEvents();
+    initNavigationEvents();
+    initDialogEvents();
+}
+
+function initMealEvents() {
     for (const meal of meals) {
-        const count = savedCart[meal.dataset.id];
-        if (Number.isInteger(count) && count > 0 && count <= 99) {
-            cart[meal.dataset.id] = count;
+        meal.querySelector(".add-button").addEventListener("click", addMeal);
+    }
+}
+
+function initBasketEvents() {
+    document.querySelector(".basket-items").addEventListener("click", changeQuantity);
+    document.querySelector(".mobile-cart").addEventListener("click", openBasket);
+    document.querySelector(".basket-close").addEventListener("click", closeBasket);
+    document.querySelector(".checkout-button").addEventListener("click", checkout);
+    document.querySelector("#basket-dialog").addEventListener("close", restoreBasket);
+    document.querySelector("#clear-basket").addEventListener("click", clearSavedBasket);
+    mobileLayout.addEventListener("change", updateBasketLayout);
+}
+/* end initialization */
+
+/* start basket */
+function loadCart() {
+    try {
+        const saved = JSON.parse(localStorage.getItem("burgerhouse-cart")) || {};
+        for (const meal of meals) {
+            const count = saved[meal.dataset.id];
+            if (Number.isInteger(count) && count > 0 && count <= 99) cart[meal.dataset.id] = count;
         }
+    } catch {
+        cart = {};
     }
-} catch {
-    cart = {};
 }
 
-function money(cents) {
-    return (cents / 100).toFixed(2).replace(".", ",") + "€";
-}
-
-function renderBasket() {
-    let subtotal = 0;
-    let itemCount = 0;
-    basketItems.innerHTML = "";
-
-    for (const meal of meals) {
-        const id = meal.dataset.id;
-        const count = cart[id] || 0;
-        const name = meal.querySelector("h3").textContent;
-        const addButton = meal.querySelector(".add-button");
-        addButton.textContent = count ? "Added " + count : "Add to basket";
-        addButton.classList.toggle("added", count > 0);
-        addButton.disabled = count === 99;
-        addButton.setAttribute("aria-label", "Add " + name + " to basket" + (count ? ", " + count + " already added" : ""));
-        if (!count) continue;
-
-        const price = Number(meal.dataset.price) * count;
-        subtotal += price;
-        itemCount += count;
-        basketItems.innerHTML += `
-            <article class="basket-item">
-                <h3>${count} x ${name}</h3>
-                <div class="basket-item-row">
-                    <div class="quantity">
-                        <button data-action="remove" data-id="${id}" aria-label="Remove ${name}"><svg viewBox="0 0 20 22" aria-hidden="true"><path d="M3 5h14M7 5V2h6v3M5 5v15h10V5M8 8v9m4-9v9"/></svg></button>
-                        ${count > 1 ? `<button data-action="minus" data-id="${id}" aria-label="Decrease ${name}">−</button>` : ""}
-                        <span>${count}</span>
-                        <button data-action="plus" data-id="${id}" aria-label="Increase ${name}" ${count === 99 ? "disabled" : ""}>+</button>
-                    </div>
-                    <span>${money(price)}</span>
-                </div>
-            </article>`;
-    }
-
-    if (!itemCount) {
-        basketItems.innerHTML = '<p class="empty-basket">Your basket is empty.<br>Add something delicious!</p>';
-    }
-
-    const delivery = itemCount ? 499 : 0;
-    document.querySelector("#subtotal").textContent = money(subtotal);
-    document.querySelector("#delivery-fee").textContent = money(delivery);
-    document.querySelector("#total").textContent = money(subtotal + delivery);
-    checkoutButton.textContent = "Buy now (" + money(subtotal + delivery) + ")";
-    checkoutButton.disabled = itemCount === 0;
-    const badge = document.querySelector(".cart-count");
-    badge.textContent = itemCount;
-    badge.hidden = itemCount === 0;
-    mobileCart.setAttribute("aria-label", "Open basket, " + itemCount + " items");
-
+function saveCart() {
     try {
         localStorage.setItem("burgerhouse-cart", JSON.stringify(cart));
     } catch {
@@ -82,108 +54,197 @@ function renderBasket() {
     }
 }
 
-for (const meal of meals) {
-    meal.querySelector(".add-button").addEventListener("click", () => {
-        const id = meal.dataset.id;
-        cart[id] = Math.min((cart[id] || 0) + 1, 99);
-        renderBasket();
-        document.querySelector("#cart-status").textContent = meal.querySelector("h3").textContent + " added to basket.";
-    });
+function money(cents) {
+    return (cents / 100).toFixed(2).replace(".", ",") + "€";
 }
 
-basketItems.addEventListener("click", (event) => {
+function renderBasket() {
+    const totals = getCartTotals();
+    renderBasketItems();
+    updateMealButtons();
+    updateTotals(totals);
+    updateBadge(totals.count);
+    saveCart();
+}
+
+function getCartTotals() {
+    let subtotal = 0;
+    let count = 0;
+    for (const meal of meals) {
+        subtotal += Number(meal.dataset.price) * (cart[meal.dataset.id] || 0);
+        count += cart[meal.dataset.id] || 0;
+    }
+    return { subtotal: subtotal, count: count, delivery: count ? 499 : 0 };
+}
+
+function renderBasketItems() {
+    let html = "";
+    for (const meal of meals) {
+        if (cart[meal.dataset.id]) html += basketItemTemplate(meal);
+    }
+    document.querySelector(".basket-items").innerHTML = html || emptyBasketTemplate();
+}
+
+function updateMealButtons() {
+    for (const meal of meals) {
+        const count = cart[meal.dataset.id] || 0;
+        const button = meal.querySelector(".add-button");
+        const name = meal.querySelector("h3").textContent;
+        button.textContent = count ? "Added " + count : "Add to basket";
+        button.classList.toggle("added", count > 0);
+        button.disabled = count === 99;
+        button.ariaLabel = "Add " + name + " to basket" + (count ? ", " + count + " already added" : "");
+    }
+}
+
+function updateTotals(totals) {
+    const total = money(totals.subtotal + totals.delivery);
+    const button = document.querySelector(".checkout-button");
+    document.querySelector("#subtotal").textContent = money(totals.subtotal);
+    document.querySelector("#delivery-fee").textContent = money(totals.delivery);
+    document.querySelector("#total").textContent = total;
+    button.textContent = "Buy now (" + total + ")";
+    button.disabled = totals.count === 0;
+}
+
+function updateBadge(count) {
+    const badge = document.querySelector(".cart-count");
+    badge.textContent = count;
+    badge.hidden = count === 0;
+    document.querySelector(".mobile-cart").ariaLabel = "Open basket, " + count + " items";
+}
+
+function addMeal(event) {
+    const meal = event.currentTarget.closest(".meal");
+    const id = meal.dataset.id;
+    cart[id] = Math.min((cart[id] || 0) + 1, 99);
+    renderBasket();
+    document.querySelector("#cart-status").textContent = meal.querySelector("h3").textContent + " added to basket.";
+}
+
+function changeQuantity(event) {
     const button = event.target.closest("button");
     if (!button) return;
     const id = button.dataset.id;
     if (button.dataset.action === "remove") delete cart[id];
     if (button.dataset.action === "minus") cart[id] -= 1;
     if (button.dataset.action === "plus") cart[id] = Math.min(cart[id] + 1, 99);
+    if (cart[id] <= 0) delete cart[id];
     renderBasket();
-    const nextButton = basketItems.querySelector(`[data-id="${id}"][data-action="${button.dataset.action}"]:not(:disabled)`);
-    (nextButton || basketItems.querySelector("button") || (basketClose.hidden ? meals[0].querySelector("button") : basketClose)).focus();
+    focusBasketButton(id, button.dataset.action);
     document.querySelector("#cart-status").textContent = "Basket updated. Total " + document.querySelector("#total").textContent;
-});
-
-function closeBasket() {
-    basket.classList.remove("open");
-    basket.removeAttribute("role");
-    basket.removeAttribute("aria-modal");
-    backdrop.hidden = true;
-    basketClose.hidden = true;
-    mobileCart.setAttribute("aria-expanded", "false");
-    document.body.classList.remove("no-scroll");
 }
 
-mobileCart.addEventListener("click", () => {
-    basket.classList.add("open");
-    basket.setAttribute("role", "dialog");
-    basket.setAttribute("aria-modal", "true");
-    backdrop.hidden = false;
-    basketClose.hidden = false;
-    mobileCart.setAttribute("aria-expanded", "true");
-    document.body.classList.add("no-scroll");
-    basketClose.focus();
-});
+function focusBasketButton(id, action) {
+    const items = document.querySelector(".basket-items");
+    const next = items.querySelector(`[data-id="${id}"][data-action="${action}"]:not(:disabled)`);
+    const fallback = mobileLayout.matches ? document.querySelector(".basket-close") : meals[0].querySelector("button");
+    (next || items.querySelector("button") || fallback).focus();
+}
 
-basketClose.addEventListener("click", () => { closeBasket(); mobileCart.focus(); });
-backdrop.addEventListener("click", () => { closeBasket(); mobileCart.focus(); });
-window.matchMedia("(min-width: 1001px)").addEventListener("change", (event) => {
-    if (event.matches) closeBasket();
-});
+function openBasket() {
+    const dialog = document.querySelector("#basket-dialog");
+    if (!mobileLayout.matches || dialog.open) return;
+    dialog.append(document.querySelector(".basket"));
+    dialog.showModal();
+    document.querySelector(".mobile-cart").ariaExpanded = "true";
+    syncScrollLock();
+}
 
-checkoutButton.addEventListener("click", () => {
+function closeBasket() {
+    document.querySelector("#basket-dialog").close();
+}
+
+function restoreBasket() {
+    if (document.querySelector("#basket-dialog").open) return;
+    document.querySelector(".basket-column").append(document.querySelector(".basket"));
+    document.querySelector(".mobile-cart").ariaExpanded = "false";
+    syncScrollLock();
+}
+
+function updateBasketLayout() {
+    if (!mobileLayout.matches) closeBasket();
+}
+
+function checkout() {
     if (!Object.keys(cart).length) return;
     cart = {};
     renderBasket();
     closeBasket();
     document.querySelector("#confirmation").showModal();
-});
-renderBasket();
-/* end basket */
-
-/* start navigation and dialogs */
-const menuToggle = document.querySelector(".menu-toggle");
-const headerMenu = document.querySelector("#header-menu");
-menuToggle.addEventListener("click", () => {
-    headerMenu.hidden = !headerMenu.hidden;
-    menuToggle.setAttribute("aria-expanded", String(!headerMenu.hidden));
-});
-headerMenu.addEventListener("click", (event) => {
-    if (event.target.closest("a")) {
-        headerMenu.hidden = true;
-        menuToggle.setAttribute("aria-expanded", "false");
-    }
-});
-
-for (const button of document.querySelectorAll("[data-dialog]")) {
-    button.addEventListener("click", () => document.getElementById(button.dataset.dialog).showModal());
+    syncScrollLock();
 }
-for (const button of document.querySelectorAll(".dialog-close")) {
-    button.addEventListener("click", () => button.closest("dialog").close());
-}
-document.querySelector("#confirmation").addEventListener("close", () => {
-    if (window.matchMedia("(max-width: 1000px)").matches) mobileCart.focus();
-    else meals[0].querySelector("button").focus();
-});
-document.querySelector("#clear-basket").addEventListener("click", () => {
+
+function clearSavedBasket() {
     cart = {};
     renderBasket();
     document.querySelector("#cookies").close();
     document.querySelector("#cart-status").textContent = "Saved basket cleared.";
-});
+}
+/* end basket */
 
-document.addEventListener("keydown", (event) => {
-    if (event.key === "Escape") {
-        headerMenu.hidden = true;
-        menuToggle.setAttribute("aria-expanded", "false");
-        if (basket.classList.contains("open")) { closeBasket(); mobileCart.focus(); }
+/* start navigation and dialogs */
+function initNavigationEvents() {
+    document.querySelector(".menu-toggle").addEventListener("click", toggleMenu);
+    document.querySelector("#header-menu").addEventListener("click", selectMenuLink);
+    document.addEventListener("keydown", handleEscape);
+}
+
+function toggleMenu() {
+    const menu = document.querySelector("#header-menu");
+    menu.hidden = !menu.hidden;
+    document.querySelector(".menu-toggle").ariaExpanded = String(!menu.hidden);
+}
+
+function closeMenu() {
+    document.querySelector("#header-menu").hidden = true;
+    document.querySelector(".menu-toggle").ariaExpanded = "false";
+}
+
+function selectMenuLink(event) {
+    if (event.target.closest("a")) closeMenu();
+}
+
+function handleEscape(event) {
+    if (event.key === "Escape") closeMenu();
+}
+
+function initDialogEvents() {
+    for (const button of document.querySelectorAll("[data-dialog]")) {
+        button.addEventListener("click", openInformation);
     }
-    if (event.key === "Tab" && basket.classList.contains("open")) {
-        const buttons = Array.from(basket.querySelectorAll("button:not(:disabled):not([hidden])"));
-        const first = buttons[0];
-        const last = buttons[buttons.length - 1];
-        if (event.shiftKey && document.activeElement === first) { event.preventDefault(); last.focus(); }
-        if (!event.shiftKey && document.activeElement === last) { event.preventDefault(); first.focus(); }
+    for (const button of document.querySelectorAll(".dialog-close")) {
+        button.addEventListener("click", closeDialog);
     }
-});
+    for (const dialog of document.querySelectorAll("dialog")) {
+        dialog.addEventListener("close", syncScrollLock);
+        dialog.addEventListener("click", closeOnBackdrop);
+    }
+    document.querySelector("#confirmation").addEventListener("close", focusAfterOrder);
+}
+
+function openInformation(event) {
+    document.getElementById(event.currentTarget.dataset.dialog).showModal();
+    syncScrollLock();
+}
+
+function closeDialog(event) {
+    event.currentTarget.closest("dialog").close();
+}
+
+function closeOnBackdrop(event) {
+    const dialog = event.currentTarget;
+    const bounds = dialog.getBoundingClientRect();
+    const outside = event.clientX < bounds.left || event.clientX > bounds.right || event.clientY < bounds.top || event.clientY > bounds.bottom;
+    if (event.target === dialog && outside) dialog.close();
+}
+
+function syncScrollLock() {
+    document.body.classList.toggle("no-scroll", !!document.querySelector("dialog[open]"));
+}
+
+function focusAfterOrder() {
+    const button = mobileLayout.matches ? document.querySelector(".mobile-cart") : meals[0].querySelector("button");
+    button.focus();
+}
 /* end navigation and dialogs */
