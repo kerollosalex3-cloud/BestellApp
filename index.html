@@ -5,6 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta name="description" content="Burgers, pizza and fresh salads from BurgerHouse. Choose your favourites and build your order.">
     <title>BurgerHouse | BestellApp</title>
+    <link rel="icon" href="assets/images/burger-icon.png">
     <link rel="stylesheet" href="style.css">
     <script src="script.js" defer></script>
 </head>
@@ -12,7 +13,7 @@
     <!-- start header -->
     <header class="site-header" id="top">
         <div class="header-content">
-            <a href="#top" aria-label="BestellApp home"><img src="assets/images/brand.png" alt="BestellApp" class="brand"></a>
+            <a href="#top" aria-label="BestellApp home"><picture><source media="(max-width: 600px)" srcset="assets/images/brand-mobile.png"><img src="assets/images/brand.png" alt="BestellApp" class="brand"></picture></a>
             <button class="menu-toggle" aria-label="Open menu" aria-expanded="false" aria-controls="header-menu"><span></span><span></span><span></span></button>
             <nav id="header-menu" hidden>
                 <a href="#burger">Burger &amp; Sandwiches</a>
@@ -26,7 +27,10 @@
     <!-- start main -->
     <main class="page-content">
         <!-- start restaurant -->
-        <div class="hero"><img src="assets/images/hero.png" alt="Fresh burgers, pizza and fries on a wooden table"></div>
+        <picture class="hero">
+            <source media="(max-width: 600px)" srcset="assets/images/hero-mobile.png">
+            <img src="assets/images/hero.png" alt="Fresh burgers, pizza and fries on a wooden table">
+        </picture>
         <section class="restaurant" aria-labelledby="restaurant-name">
             <img class="restaurant-logo" src="assets/images/restaurant-logo.png" alt="BurgerHouse burger logo">
             <div class="restaurant-heading">
@@ -54,10 +58,13 @@
             </aside>
             <!-- end basket -->
             <section class="food-section" id="burger" aria-labelledby="burger-title">
-                <div class="section-heading"><img src="assets/images/burger-icon.png" alt=""><h2 id="burger-title">Burger &amp; Sandwiches</h2></div>
+                <div class="section-heading"><img src="assets/images/burger-icon.png" alt=""><h2 id="burger-title">Burger<span class="desktop-label"> &amp; Sandwiches</span></h2></div>
                 <div class="meal-list">
                     <article class="meal" data-id="burger-1" data-price="1690">
-                        <img class="meal-image" src="assets/images/burger-1.png" alt="Veggie mushroom black burger" loading="lazy">
+                        <picture class="meal-picture">
+                            <source media="(max-width: 600px)" srcset="assets/images/burger-1-mobile.png">
+                            <img class="meal-image" src="assets/images/burger-1.png" alt="Veggie mushroom black burger">
+                        </picture>
                         <div class="meal-details">
                             <h3>Veggie mushroom black burger</h3>
                             <p>Mixed green salad, Tomatoes, Edamame, Mushrooms</p>
@@ -66,7 +73,10 @@
                         </div>
                     </article>
                     <article class="meal" data-id="burger-2" data-price="1590">
-                        <img class="meal-image" src="assets/images/burger-2.png" alt="All meat burger" loading="lazy">
+                        <picture class="meal-picture">
+                            <source media="(max-width: 600px)" srcset="assets/images/burger-2-mobile.png">
+                            <img class="meal-image" src="assets/images/burger-2.png" alt="All meat burger">
+                        </picture>
                         <div class="meal-details">
                             <h3>All meat burger</h3>
                             <p>Beef, Bacon, Dill pickles, Smoked cheese, Ketchup, BBQ souse</p>
@@ -75,7 +85,10 @@
                         </div>
                     </article>
                     <article class="meal" data-id="burger-3" data-price="1490">
-                        <img class="meal-image" src="assets/images/burger-3.png" alt="Beef red burger" loading="lazy">
+                        <picture class="meal-picture">
+                            <source media="(max-width: 600px)" srcset="assets/images/burger-3-mobile.png">
+                            <img class="meal-image" src="assets/images/burger-3.png" alt="Beef red burger">
+                        </picture>
                         <div class="meal-details">
                             <h3>Beef red burger</h3>
                             <p>Beef, Cheese, Tomatoes, Lettuce, Onion</p>
@@ -84,7 +97,10 @@
                         </div>
                     </article>
                     <article class="meal" data-id="burger-4" data-price="1590">
-                        <img class="meal-image" src="assets/images/burger-4.png" alt="Big chicken burger" loading="lazy">
+                        <picture class="meal-picture">
+                            <source media="(max-width: 600px)" srcset="assets/images/burger-4-mobile.png">
+                            <img class="meal-image" src="assets/images/burger-4.png" alt="Big chicken burger">
+                        </picture>
                         <div class="meal-details">
                             <h3>Big chicken burger</h3>
                             <p>Chicken, Cheese, Tomatoes, Lettuce, Onion, Bell pepper,</p>
@@ -98,7 +114,10 @@
                 <div class="section-heading"><img src="assets/images/pizza-icon.png" alt=""><h2 id="pizza-title">Pizza <span>(30cm)</span></h2></div>
                 <div class="meal-list">
                     <article class="meal" data-id="pizza-1" data-price="1190">
-                        <img class="meal-image" src="assets/images/pizza-1.png" alt="Pizza Margherita" loading="lazy">
+                        <picture class="meal-picture">
+                            <source media="(max-width: 600px)" srcset="assets/images/pizza-1-mobile.png">
+                            <img class="meal-image" src="assets/images/pizza-1.png" alt="Pizza Margherita">
+                        </picture>
                         <div class="meal-details">
                             <h3>Pizza Margherita</h3>
                             <p>Tomato Sauce, Mozzarella</p>
@@ -107,7 +126,10 @@
                         </div>
                     </article>
                     <article class="meal" data-id="pizza-2" data-price="1390">
-                        <img class="meal-image" src="assets/images/pizza-2.png" alt="Pizza Chorizo" loading="lazy">
+                        <picture class="meal-picture">
+                            <source media="(max-width: 600px)" srcset="assets/images/pizza-2-mobile.png">
+                            <img class="meal-image" src="assets/images/pizza-2.png" alt="Pizza Chorizo">
+                        </picture>
                         <div class="meal-details">
                             <h3>Pizza Chorizo</h3>
                             <p>Tomato slices, Mozzarella, Chorizo</p>
@@ -116,7 +138,10 @@
                         </div>
                     </article>
                     <article class="meal" data-id="pizza-3" data-price="1290">
-                        <img class="meal-image" src="assets/images/pizza-3.png" alt="Funghi" loading="lazy">
+                        <picture class="meal-picture">
+                            <source media="(max-width: 600px)" srcset="assets/images/pizza-3-mobile.png">
+                            <img class="meal-image" src="assets/images/pizza-3.png" alt="Funghi">
+                        </picture>
                         <div class="meal-details">
                             <h3>Funghi</h3>
                             <p>Red onion, Olives, Button Mushrooms, Mozzarella</p>
@@ -125,7 +150,10 @@
                         </div>
                     </article>
                     <article class="meal" data-id="pizza-4" data-price="1590">
-                        <img class="meal-image" src="assets/images/pizza-4.png" alt="Quattro Formaggi with Chicken" loading="lazy">
+                        <picture class="meal-picture">
+                            <source media="(max-width: 600px)" srcset="assets/images/pizza-4-mobile.png">
+                            <img class="meal-image" src="assets/images/pizza-4.png" alt="Quattro Formaggi with Chicken">
+                        </picture>
                         <div class="meal-details">
                             <h3>Quattro Formaggi with Chicken</h3>
                             <p>Chicken, Mozzarella, Gorgonzola, Fontina, Parmigiano Reggiano</p>
@@ -139,7 +167,10 @@
                 <div class="section-heading"><img src="assets/images/salad-icon.png" alt=""><h2 id="salad-title">Salad</h2></div>
                 <div class="meal-list">
                     <article class="meal" data-id="salad-1" data-price="1690">
-                        <img class="meal-image" src="assets/images/salad-1.png" alt="Warm beef arugula salad" loading="lazy">
+                        <picture class="meal-picture">
+                            <source media="(max-width: 600px)" srcset="assets/images/salad-1-mobile.png">
+                            <img class="meal-image" src="assets/images/salad-1.png" alt="Warm beef arugula salad">
+                        </picture>
                         <div class="meal-details">
                             <h3>Warm beef arugula salad</h3>
                             <p>Beef, Arugula, Field salad, Greek feta, Cherry tomatoes, Sun-dried Tomatoes, Balsamic vinegar dressing</p>
@@ -148,7 +179,10 @@
                         </div>
                     </article>
                     <article class="meal" data-id="salad-2" data-price="790">
-                        <img class="meal-image" src="assets/images/salad-2.png" alt="Mini green Salad" loading="lazy">
+                        <picture class="meal-picture">
+                            <source media="(max-width: 600px)" srcset="assets/images/salad-2-mobile.png">
+                            <img class="meal-image" src="assets/images/salad-2.png" alt="Mini green Salad">
+                        </picture>
                         <div class="meal-details">
                             <h3>Mini green Salad</h3>
                             <p>Green salad, Cucumber, Carrots, Parsley, Radishes</p>
@@ -157,7 +191,10 @@
                         </div>
                     </article>
                     <article class="meal" data-id="salad-3" data-price="1690">
-                        <img class="meal-image" src="assets/images/salad-3.png" alt="Green Salad with sea food" loading="lazy">
+                        <picture class="meal-picture">
+                            <source media="(max-width: 600px)" srcset="assets/images/salad-3-mobile.png">
+                            <img class="meal-image" src="assets/images/salad-3.png" alt="Green Salad with sea food">
+                        </picture>
                         <div class="meal-details">
                             <h3>Green Salad with sea food</h3>
                             <p>Mixed greens, Cherry tomatoes, Red onion, Mussels, Squid rings, Shrimp, Dijon mustard-lemon dressing with dill</p>
@@ -166,7 +203,10 @@
                         </div>
                     </article>
                     <article class="meal" data-id="salad-4" data-price="1490">
-                        <img class="meal-image" src="assets/images/salad-4.png" alt="Vegan green salad with tofu" loading="lazy">
+                        <picture class="meal-picture">
+                            <source media="(max-width: 600px)" srcset="assets/images/salad-4-mobile.png">
+                            <img class="meal-image" src="assets/images/salad-4.png" alt="Vegan green salad with tofu">
+                        </picture>
                         <div class="meal-details">
                             <h3>Vegan green salad with tofu</h3>
                             <p>Green salad, Cherry tomatoes, Cucumber, Baby spinach, Edamame, Radishes, Bittercress, Tofu, Peanuts</p>
@@ -201,21 +241,21 @@
     <!-- end mobile navigation -->
 
     <!-- start dialogs -->
-    <dialog id="confirmation" class="confirmation">
+    <dialog id="confirmation" class="confirmation" aria-labelledby="confirmation-title">
         <button class="dialog-close" aria-label="Close order confirmation">×</button>
         <img src="assets/images/delivery.png" alt="">
-        <h2>Order confirmed!</h2>
+        <h2 id="confirmation-title">Order confirmed!</h2>
         <p>Your food is on the way!</p>
     </dialog>
-    <dialog id="imprint" class="information-dialog">
+    <dialog id="imprint" class="information-dialog" aria-labelledby="imprint-title">
         <button class="dialog-close" aria-label="Close imprint">×</button>
-        <h2>Imprint</h2>
+        <h2 id="imprint-title">Imprint</h2>
         <p>BurgerHouse · BestellApp</p>
         <p>This is a student demonstration of a food ordering website. Orders are simulated; no payment is taken and no food is delivered.</p>
     </dialog>
-    <dialog id="cookies" class="information-dialog">
+    <dialog id="cookies" class="information-dialog" aria-labelledby="cookies-title">
         <button class="dialog-close" aria-label="Close cookie preferences">×</button>
-        <h2>Cookie Preferences</h2>
+        <h2 id="cookies-title">Cookie Preferences</h2>
         <p>This website uses no tracking or advertising cookies. Your basket is saved in your browser so it is still available when you return.</p>
         <button id="clear-basket" class="plain-button">Clear saved basket</button>
     </dialog>
