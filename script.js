@@ -35,7 +35,7 @@ function createBasketControls(meal, count) {
     let html = removeButtonTemplate(meal.id, meal.name);
     const disabled = count === 99 ? "disabled" : "";
     if (count > 1) {
-        html += quantityButtonTemplate(meal.id, meal.name, "minus", "Decrease", "−", "");
+        html = quantityButtonTemplate(meal.id, meal.name, "minus", "Decrease", "−", "");
     }
     html += quantityCountTemplate(count);
     html += quantityButtonTemplate(meal.id, meal.name, "plus", "Increase", "+", disabled);

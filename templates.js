@@ -16,7 +16,7 @@ function quantityCountTemplate(count) {
 
 function removeButtonTemplate(id, name) {
     return `<button data-action="remove" data-id="${id}" aria-label="Remove ${name}">
-        <svg viewBox="0 0 20 22" aria-hidden="true"><path d="M3 5h14M7 5V2h6v3M5 5v15h10V5M8 8v9m4-9v9"/></svg>
+        <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 6h16M9 6V3h6v3M6 6v15h12V6M10 9v9m4-9v9"/></svg>
     </button>`;
 }
 
