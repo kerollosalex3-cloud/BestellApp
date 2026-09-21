@@ -1,25 +1,17 @@
 "use strict";
 
-/* start basket templates */
-function basketItemTemplate(meal) {
-    const id = meal.dataset.id;
-    const name = meal.querySelector("h3").textContent;
-    const count = cart[id];
-    const price = Number(meal.dataset.price) * count;
+function basketItemTemplate(name, count, price, controls) {
     return `<article class="basket-item">
         <h3>${count} x ${name}</h3>
         <div class="basket-item-row">
-            <div class="quantity">${basketControlsTemplate(id, name, count)}</div>
-            <span>${money(price)}</span>
+            <div class="quantity">${controls}</div>
+            <span>${price}</span>
         </div>
     </article>`;
 }
 
-function basketControlsTemplate(id, name, count) {
-    return `${removeButtonTemplate(id, name)}
-        ${count > 1 ? quantityButtonTemplate(id, name, "minus", "Decrease", "−", false) : ""}
-        <span>${count}</span>
-        ${quantityButtonTemplate(id, name, "plus", "Increase", "+", count === 99)}`;
+function quantityCountTemplate(count) {
+    return `<span>${count}</span>`;
 }
 
 function removeButtonTemplate(id, name) {
@@ -29,10 +21,24 @@ function removeButtonTemplate(id, name) {
 }
 
 function quantityButtonTemplate(id, name, action, label, symbol, disabled) {
-    return `<button data-action="${action}" data-id="${id}" aria-label="${label} ${name}" ${disabled ? "disabled" : ""}>${symbol}</button>`;
+    return `<button data-action="${action}" data-id="${id}" aria-label="${label} ${name}" ${disabled}>${symbol}</button>`;
 }
 
 function emptyBasketTemplate() {
     return '<p class="empty-basket">Your basket is empty.<br>Add something delicious!</p>';
 }
-/* end basket templates */
+
+function mealTemplate(meal, price) {
+    return `<article class="meal" data-id="${meal.id}">
+        <picture class="meal-picture">
+            <source media="(max-width: 600px)" srcset="${meal.mobileImage}">
+            <img class="meal-image" src="${meal.image}" alt="${meal.name}">
+        </picture>
+        <div class="meal-details">
+            <h3>${meal.name}</h3>
+            <p>${meal.description}</p>
+            <span class="meal-price">${price}</span>
+            <button class="add-button" aria-label="Add ${meal.name} to basket">Add to basket</button>
+        </div>
+    </article>`;
+}

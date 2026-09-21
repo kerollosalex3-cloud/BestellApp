@@ -1,12 +1,10 @@
 "use strict";
 
 let cart = {};
-let meals = [];
 let mobileLayout;
 
-/* start initialization */
 function init() {
-    meals = Array.from(document.querySelectorAll(".meal"));
+    renderMenu();
     mobileLayout = window.matchMedia("(max-width: 1320px)");
     loadCart();
     renderBasket();
@@ -16,9 +14,37 @@ function init() {
     initDialogEvents();
 }
 
+function renderMenu() {
+    for (const list of document.querySelectorAll(".meal-list")) {
+        list.innerHTML = "";
+    }
+    for (const meal of meals) {
+        const list = document.querySelector("#" + meal.category + " .meal-list");
+        list.innerHTML += mealTemplate(meal, money(meal.price));
+    }
+}
+
+function createBasketItem(meal) {
+    const count = cart[meal.id];
+    const price = money(meal.price * count);
+    const controls = createBasketControls(meal, count);
+    return basketItemTemplate(meal.name, count, price, controls);
+}
+
+function createBasketControls(meal, count) {
+    let html = removeButtonTemplate(meal.id, meal.name);
+    const disabled = count === 99 ? "disabled" : "";
+    if (count > 1) {
+        html += quantityButtonTemplate(meal.id, meal.name, "minus", "Decrease", "−", "");
+    }
+    html += quantityCountTemplate(count);
+    html += quantityButtonTemplate(meal.id, meal.name, "plus", "Increase", "+", disabled);
+    return html;
+}
+
 function initMealEvents() {
     for (const meal of meals) {
-        meal.querySelector(".add-button").addEventListener("click", addMeal);
+        document.querySelector(`[data-id="${meal.id}"] .add-button`).addEventListener("click", addMeal);
     }
 }
 
@@ -31,15 +57,13 @@ function initBasketEvents() {
     document.querySelector("#clear-basket").addEventListener("click", clearSavedBasket);
     mobileLayout.addEventListener("change", updateBasketLayout);
 }
-/* end initialization */
 
-/* start basket */
 function loadCart() {
     try {
         const saved = JSON.parse(localStorage.getItem("burgerhouse-cart")) || {};
         for (const meal of meals) {
-            const count = saved[meal.dataset.id];
-            if (Number.isInteger(count) && count > 0 && count <= 99) cart[meal.dataset.id] = count;
+            const count = saved[meal.id];
+            if (Number.isInteger(count) && count > 0 && count <= 99) cart[meal.id] = count;
         }
     } catch {
         cart = {};
@@ -71,8 +95,8 @@ function getCartTotals() {
     let subtotal = 0;
     let count = 0;
     for (const meal of meals) {
-        subtotal += Number(meal.dataset.price) * (cart[meal.dataset.id] || 0);
-        count += cart[meal.dataset.id] || 0;
+        subtotal += meal.price * (cart[meal.id] || 0);
+        count += cart[meal.id] || 0;
     }
     return { subtotal: subtotal, count: count, delivery: count ? 499 : 0 };
 }
@@ -80,16 +104,16 @@ function getCartTotals() {
 function renderBasketItems() {
     let html = "";
     for (const meal of meals) {
-        if (cart[meal.dataset.id]) html += basketItemTemplate(meal);
+        if (cart[meal.id]) html += createBasketItem(meal);
     }
     document.querySelector(".basket-items").innerHTML = html || emptyBasketTemplate();
 }
 
 function updateMealButtons() {
     for (const meal of meals) {
-        const count = cart[meal.dataset.id] || 0;
-        const button = meal.querySelector(".add-button");
-        const name = meal.querySelector("h3").textContent;
+        const count = cart[meal.id] || 0;
+        const button = document.querySelector(`[data-id="${meal.id}"] .add-button`);
+        const name = meal.name;
         button.textContent = count ? "Added " + count : "Add to basket";
         button.classList.toggle("added", count > 0);
         button.disabled = count === 99;
@@ -115,11 +139,11 @@ function updateBadge(count) {
 }
 
 function addMeal(event) {
-    const meal = event.currentTarget.closest(".meal");
-    const id = meal.dataset.id;
+    const id = event.currentTarget.closest(".meal").dataset.id;
+    const meal = meals.find(item => item.id === id);
     cart[id] = Math.min((cart[id] || 0) + 1, 99);
     renderBasket();
-    document.querySelector("#cart-status").textContent = meal.querySelector("h3").textContent + " added to basket.";
+    document.querySelector("#cart-status").textContent = meal.name + " added to basket.";
 }
 
 function changeQuantity(event) {
@@ -138,7 +162,7 @@ function changeQuantity(event) {
 function focusBasketButton(id, action) {
     const items = document.querySelector(".basket-items");
     const next = items.querySelector(`[data-id="${id}"][data-action="${action}"]:not(:disabled)`);
-    const fallback = mobileLayout.matches ? document.querySelector(".basket-close") : meals[0].querySelector("button");
+    const fallback = mobileLayout.matches ? document.querySelector(".basket-close") : document.querySelector(".add-button");
     (next || items.querySelector("button") || fallback).focus();
 }
 
@@ -181,9 +205,7 @@ function clearSavedBasket() {
     document.querySelector("#cookies").close();
     document.querySelector("#cart-status").textContent = "Saved basket cleared.";
 }
-/* end basket */
 
-/* start navigation and dialogs */
 function initNavigationEvents() {
     document.querySelector(".menu-toggle").addEventListener("click", toggleMenu);
     document.querySelector("#header-menu").addEventListener("click", selectMenuLink);
@@ -244,7 +266,6 @@ function syncScrollLock() {
 }
 
 function focusAfterOrder() {
-    const button = mobileLayout.matches ? document.querySelector(".mobile-cart") : meals[0].querySelector("button");
+    const button = mobileLayout.matches ? document.querySelector(".mobile-cart") : document.querySelector(".add-button");
     button.focus();
 }
-/* end navigation and dialogs */
