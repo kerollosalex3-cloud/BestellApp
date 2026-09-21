@@ -39,6 +39,7 @@
 }
 
 .basket-item {
+    position: relative;
     padding: 20px;
     background: #fdeadc;
     color: #363534;
@@ -47,6 +48,7 @@
 }
 
 .basket-item h3 {
+    padding-right: 30px;
     font-size: 22px;
     line-height: 1.2;
     font-weight: 700;
@@ -75,7 +77,7 @@
     font-variant-numeric: tabular-nums;
 }
 
-.quantity button {
+.quantity button, .basket-item > button {
     padding: 0;
     width: 30px;
     height: 34px;
@@ -89,13 +91,19 @@
     font-size: 26px;
 }
 
-.quantity svg {
+.quantity svg, .basket-item > button svg {
     width: 24px;
     height: 24px;
     fill: none;
     stroke: currentColor;
     stroke-width: 2;
     vertical-align: middle;
+}
+
+.basket-item > button {
+    position: absolute;
+    top: 10px;
+    right: 8px;
 }
 
 .quantity button:disabled {

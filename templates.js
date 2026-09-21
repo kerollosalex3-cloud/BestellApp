@@ -1,7 +1,8 @@
 "use strict";
 
-function basketItemTemplate(name, count, price, controls) {
+function basketItemTemplate(name, count, price, controls, remove) {
     return `<article class="basket-item">
+        ${remove}
         <h3>${count} x ${name}</h3>
         <div class="basket-item-row">
             <div class="quantity">${controls}</div>

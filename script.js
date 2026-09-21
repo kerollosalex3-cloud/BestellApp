@@ -28,7 +28,8 @@ function createBasketItem(meal) {
     const count = cart[meal.id];
     const price = money(meal.price * count);
     const controls = createBasketControls(meal, count);
-    return basketItemTemplate(meal.name, count, price, controls);
+    const remove = count > 1 ? removeButtonTemplate(meal.id, meal.name) : "";
+    return basketItemTemplate(meal.name, count, price, controls, remove);
 }
 
 function createBasketControls(meal, count) {
@@ -50,7 +51,7 @@ function initMealEvents() {
 
 function initBasketEvents() {
     document.querySelector(".basket-items").addEventListener("click", changeQuantity);
-    document.querySelector(".mobile-cart").addEventListener("click", openBasket);
+    document.querySelector(".mobile-cart").addEventListener("click", toggleBasket);
     document.querySelector(".basket-close").addEventListener("click", closeBasket);
     document.querySelector(".checkout-button").addEventListener("click", checkout);
     document.querySelector("#basket-dialog").addEventListener("close", restoreBasket);
@@ -135,7 +136,15 @@ function updateBadge(count) {
     const badge = document.querySelector(".cart-count");
     badge.textContent = count;
     badge.hidden = count === 0;
-    document.querySelector(".mobile-cart").ariaLabel = "Open basket, " + count + " items";
+    updateCartLabel();
+}
+
+function updateCartLabel() {
+    const open = document.querySelector("#basket-dialog").open;
+    const button = document.querySelector(".mobile-cart");
+    const count = document.querySelector(".cart-count").textContent;
+    button.ariaExpanded = String(open);
+    button.ariaLabel = (open ? "Close basket, " : "Open basket, ") + count + " items";
 }
 
 function addMeal(event) {
@@ -166,12 +175,18 @@ function focusBasketButton(id, action) {
     (next || items.querySelector("button") || fallback).focus();
 }
 
+function toggleBasket() {
+    if (document.querySelector("#basket-dialog").open) closeBasket();
+    else openBasket();
+}
+
 function openBasket() {
     const dialog = document.querySelector("#basket-dialog");
     if (!mobileLayout.matches || dialog.open) return;
     dialog.append(document.querySelector(".basket"));
+    dialog.append(document.querySelector(".mobile-nav"));
     dialog.showModal();
-    document.querySelector(".mobile-cart").ariaExpanded = "true";
+    updateCartLabel();
     syncScrollLock();
 }
 
@@ -182,8 +197,12 @@ function closeBasket() {
 function restoreBasket() {
     if (document.querySelector("#basket-dialog").open) return;
     document.querySelector(".basket-column").append(document.querySelector(".basket"));
-    document.querySelector(".mobile-cart").ariaExpanded = "false";
+    document.body.insertBefore(document.querySelector(".mobile-nav"), document.querySelector("#cart-status"));
+    updateCartLabel();
     syncScrollLock();
+    if (mobileLayout.matches && !document.querySelector("dialog[open]")) {
+        document.querySelector(".mobile-cart").focus();
+    }
 }
 
 function updateBasketLayout() {
@@ -210,6 +229,11 @@ function initNavigationEvents() {
     document.querySelector(".menu-toggle").addEventListener("click", toggleMenu);
     document.querySelector("#header-menu").addEventListener("click", selectMenuLink);
     document.addEventListener("keydown", handleEscape);
+    document.querySelector(".mobile-nav").addEventListener("click", selectMobileLink);
+}
+
+function selectMobileLink(event) {
+    if (event.target.closest("a")) closeBasket();
 }
 
 function toggleMenu() {
